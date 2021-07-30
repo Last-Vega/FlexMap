@@ -1,0 +1,82 @@
+[
+    {
+        "model": "search.Options",
+        "pk": 1,
+        "fields": { 
+            "vehicle": "car",
+            "speed": 60,
+            "first_fee": 0,
+            "over_fee": 0
+        }
+    },
+    {
+        "model": "search.Options",
+        "pk": 2,
+        "fields": { 
+            "vehicle": "bicycle",
+            "speed": 15,
+            "first_fee": 0,
+            "over_fee": 0
+        }
+    },
+    {
+        "model": "search.Options",
+        "pk": 3,
+        "fields": { 
+            "vehicle": "bus",
+            "speed": 60,
+            "first_fee": 0,
+            "over_fee": 0
+        }
+    },
+    {
+        "model": "search.Options",
+        "pk": 4,
+        "fields": { 
+            "vehicle": "train",
+            "speed": 80,
+            "first_fee": 0,
+            "over_fee": 0
+        }
+    },
+    {
+        "model": "search.Options",
+        "pk": 5,
+        "fields": { 
+            "vehicle": "walk",
+            "speed": 5,
+            "first_fee": 0,
+            "over_fee": 0
+        }
+    },
+    {
+        "model": "search.Options",
+        "pk": 6,
+        "fields": { 
+            "vehicle": "bus",
+            "speed": 60,
+            "first_fee": 0,
+            "over_fee": 0
+        }
+    },
+    {
+        "model": "search.Options",
+        "pk": 7,
+        "fields": { 
+            "vehicle": "rental_bicycle",
+            "speed": 15,
+            "first_fee": 165,
+            "over_fee": 110
+        }
+    },
+    {
+        "model": "search.Options",
+        "pk": 8,
+        "fields": { 
+            "vehicle": "rental_kickboard",
+            "speed": 15,
+            "firts_fee": 110,
+            "over_fee": 16.5
+        }
+    }
+]

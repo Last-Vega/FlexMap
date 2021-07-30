@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <meta charset="UTF-8">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script type="text/javascript" src="{% static 'js/googleplace.js' %}"></script>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key={{GOOGLEMAPS_API_KEY}}&libraries=places&sensor=false&language=jp"></script>
+    <title>Directions Service</title>
+  </head>
+  <body>
+    <div id="floating-panel">
+        <form action="{% url 'search:user_input' %}" method="post">{% csrf_token %}
+            {% for field in form %}
+            <p>
+                {{field.label}}
+                {{field}}
+                {{field.help_text}}
+            </p>
+            {% endfor %}
+            <input type="submit" value="send">
+        </form>
+    </div>
+    <p>{{choice}}</p>
+    <p>{{result}}</p>
+    <div id="map"></div>
+  </body>
+</html>

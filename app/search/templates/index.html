@@ -1,0 +1,191 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Directions Service</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <!-- <script type="text/javascript" src="{% static 'js/directionService.js' %}"></script> -->
+    
+  </head>
+
+  <body>
+    <div id="container">
+      <div id="map"></div>
+      <div id="sidebar"></div>
+    </div>
+    <div id="warnings-panel"></div>
+
+    <div id="floating-panel">
+        <form action="{% url 'search:user_input' %}" method="post">{% csrf_token %}
+            {% for field in form %}
+            <p>
+                {{field.label}}
+                {{field}}
+                {{field.help_text}}
+            </p>
+            {% endfor %}
+            <input type="submit" value="send" id="search">
+        </form>
+
+        {% for data in dummy %}
+        <div id="result">
+            <button type="button">
+                <p>{{data.0.legs.0.distance.text}}</p>
+                <p>{{data.0.legs.0.duration.text}}</p>        
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key={{GOOGLEMAPS_API_KEY}}&callback=initMap&libraries=places&v=weekly"
+      async
+    ></script>
+    <!-- <script src="http://code.jquery.com/mobile/1.5.0-alpha.1/jquery.mobile-1.5.0-alpha.1.min.js"></script> -->
+    <script>
+      window.addEventListener('load', function(){
+            {% autoescape off %}
+            var result = {{result}}
+            var department = "{{department}}"
+            var destination = "{{destination}}"
+            {% endautoescape %}
+            // console.log(result)
+            // console.log(department)
+      })
+
+      var map
+      function initMap() {
+          const directionsService = new google.maps.DirectionsService();
+          const directionsRenderer = new google.maps.DirectionsRenderer();
+          map = new google.maps.Map(document.getElementById("map"), {
+              zoom: 12,
+              center: { lat: 35.6811673, lng: 139.7670516 },
+          });
+          directionsRenderer.setMap(map);
+          directionsRenderer.setPanel(document.getElementById("sidebar"));  
+          // console.log("init")
+          
+          {% autoescape off %}
+          var result = {{result}}
+          var dummy = {{dummy}}
+          var department = "{{department}}"
+          var destination = "{{destination}}"
+          {% endautoescape %}
+
+          calculateAndDisplayRoute(directionsService, directionsRenderer,result);
+          // ルートの表示−−−−−−−−−−−−−
+          const onChangeHandler = function () {
+              // htmlで受け取った出発地と目的地を登録
+              // var Points = []
+              // Points.push({
+              //     "start" :  document.getElementById("start").value,
+              //     "end" : document.getElementById("end").value,
+              //     "color" : "#45A1CF"
+              // })
+
+              // // 2つ以上ルートがあったら同時に表示する
+              // if (Points.length > 1) {
+              //     for(var i in Points){
+              //         fCalcRoute(Points[i]['start'], Points[i]['end'], Points[i]['color']);
+              //     }
+              // }
+              // console.log(Points[0])
+              calculateAndDisplayRoute(directionsService, directionsRenderer);
+
+          };
+          
+          // マーカーを表示する場合の準備
+          var infoWindow = new google.maps.InfoWindow();
+          var mark = function(position, content) {
+              var marker = new google.maps.Marker({
+                  map: map, // 描画先の地図
+                  position: position // 座標
+              });
+              // クリック時吹き出しを表示
+              // marker.addListener("click", function(){
+              //     infoWindow.setContent(content);
+              //     infoWindow.open(map, marker);
+              // });
+          };
+
+          var sid = setInterval(function(){
+              // 分割したすべての検索が完了するまで待ちます。
+              // if (requestIndex > done) return;
+              clearInterval(sid);
+              console.log("sid")
+
+              {% autoescape off %}
+              var result = {{result}}
+              {% endautoescape %}
+
+              console.log(result)
+
+              // すべての結果のルート座標を順番に取得して平坦な配列にします。
+              var path = [];
+              var legs = result.routes[0].legs; // Array<DirectionsLeg>
+              console.log(legs)
+              for (var li = 0, llen = legs.length; li < llen; li++) {
+                  var leg = legs[li]; // DirectionLeg
+                  console.log(leg)
+                  var steps = leg.steps; // Array<DirectionsStep>
+                  console.log(steps)
+                  // DirectionsStepが持っているpathを取得して平坦(2次元配列→1次元配列)にします。
+                  var _path = steps.map(function(step){ return step.start_location })
+
+                      // .reduce(function(all, paths){ return all.concat(paths) });
+                  console.log(_path)
+                  path = path.concat(_path);
+                  // path = _path.points
+
+                  // マーカーが必要ならマーカーを表示します。
+                  mark(leg.start_location, leg.start_address);
+              }
+              
+              // マーカーが必要ならマーカーを表示します。(最終)
+              var endLeg = result.routes[0].legs[result.routes[0].legs.length-1];
+              mark(endLeg.end_location, endLeg.end_address);
+
+              // パスを描画します。
+              var line = new google.maps.Polyline({
+                  map: map, // 描画先の地図
+                  strokeColor: "#2196f3", // 線の色
+                  strokeOpacity: 0.8, // 線の不透明度
+                  strokeWeight: 6, // 先の太さ
+                  path: path // 描画するパスデータ
+              });
+          }, 1000);
+
+          document.getElementById("search").addEventListener("click", onChangeHandler);
+      }
+
+      function displayRoute(directionsRenderer, result) {
+          directionsRenderer.setDirections(response);
+      }
+
+      function calculateAndDisplayRoute(directionsService, directionsRenderer, result) {
+          // const travelMode = document.getElementById("mode").value
+          directionsService
+              .route({
+              origin: {
+                  query: "東京駅",
+              },
+              destination: {
+                  query: "つくば駅",
+              },
+              travelMode: google.maps.TravelMode["DRIVING"],
+              })
+              .then((response) => {
+                console.log(response)
+                console.log(result)
+              directionsRenderer.setDirections(result);
+              })
+              .catch((e) => window.alert("Directions request failed due to " + status));
+      }
+      
+    </script>
+    <script type="text/javascript" src="{% static 'js/googleplace.js' %}"></script>
+  </body>
+</html>

@@ -1,0 +1,52 @@
+html {
+    height: 100%
+}
+
+body {
+    height: 100%
+}
+
+#container {
+    position: relative;
+    height: 100%;
+    display: flex;
+}
+
+#map {
+    height: 100%;
+    width: 100%
+}
+
+#sidebar {
+    position: absolute;
+    top: 10%;
+    left: 0%;
+    z-index: 5;
+    background-color: #fff;
+    max-width: 30rem;
+    padding: 5px;
+    border: 1px solid #999;
+    text-align: center;
+    font-family: "Roboto", "sans-serif";
+    line-height: 30px;
+    padding-left: 10px;
+    overflow: auto;
+}
+
+#floating-panel {
+    position: absolute;
+    top: 10%;
+    left: 8px;
+    z-index: 5;
+    background-color: #fff;
+    padding: 5px;
+    border: 1px solid #999;
+    text-align: center;
+    font-family: "Roboto", "sans-serif";
+    line-height: 30px;
+    padding-left: 10px;
+}
+
+#result {
+    background-color: #999;
+}
